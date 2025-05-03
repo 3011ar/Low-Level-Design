@@ -31,28 +31,20 @@ public:
         int price = marker.price * quantity;
         return price;
     }
+
 };
 
-// InvoiceDao interface
+// InvoiceDao class (data access)
 class InvoiceDao {
-public:
-    virtual void save(Invoice invoice) = 0;
-    virtual ~InvoiceDao() = default;
-};
+private:
+    Invoice invoice;
 
-// DatabaseInvoiceDao class
-class DatabaseInvoiceDao : public InvoiceDao {
 public:
-    void save(Invoice invoice) override {
+    InvoiceDao(Invoice invoice) : invoice(invoice) {}
+
+    void saveToDb() {
+        // Placeholder for DB saving logic
         cout << "Saving invoice to database..." << endl;
-    }
-};
-
-// FileInvoiceDao class
-class FileInvoiceDao : public InvoiceDao {
-public:
-    void save(Invoice invoice) override {
-        cout << "Saving invoice to file..." << endl;
     }
 };
 
@@ -78,15 +70,11 @@ int main() {
     // Create an Invoice for 5 markers
     Invoice invoice(marker, 5);
 
-    // Save invoice to database
-    DatabaseInvoiceDao dbDao;
-    dbDao.save(invoice);
+    // Create InvoiceDao and save to DB
+    InvoiceDao invoiceDao(invoice);
+    invoiceDao.saveToDb();
 
-    // Save invoice to file
-    FileInvoiceDao fileDao;
-    fileDao.save(invoice);
-
-    // Print Invoice
+    // Create InvoicePrinter and print the invoice
     InvoicePrinter invoicePrinter(invoice);
     invoicePrinter.print();
 

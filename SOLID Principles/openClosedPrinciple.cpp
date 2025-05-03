@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 #include <string>
 using namespace std;
 
@@ -11,8 +10,12 @@ public:
     int year;
     int price;
 
-    Marker(string name, string color, int year, int price)
-        : name(name), color(color), year(year), price(price) {}
+    Marker(string name, string color, int year, int price) {
+        this->name = name;
+        this->color = color;
+        this->year = year;
+        this->price = price;
+    }
 };
 
 // Invoice class (business logic)
@@ -24,37 +27,32 @@ private:
 public:
     Invoice(Marker marker, int quantity) : marker(marker), quantity(quantity) {}
 
-    int calculateTotal() const {
-        return marker.price * quantity;
-    }
-
-    string getMarkerName() const {
-        return marker.name;
+    int calculateTotal() {
+        int price = marker.price * quantity;
+        return price;
     }
 };
 
-// InvoiceDao interface (abstract class)
+// InvoiceDao interface
 class InvoiceDao {
 public:
-    virtual void save(const Invoice& invoice) = 0;
+    virtual void save(Invoice invoice) = 0;
     virtual ~InvoiceDao() = default;
 };
 
 // DatabaseInvoiceDao class
 class DatabaseInvoiceDao : public InvoiceDao {
 public:
-    void save(const Invoice& invoice) override {
+    void save(Invoice invoice) override {
         cout << "Saving invoice to database..." << endl;
-        cout << "Total: " << invoice.calculateTotal() << endl;
     }
 };
 
 // FileInvoiceDao class
 class FileInvoiceDao : public InvoiceDao {
 public:
-    void save(const Invoice& invoice) override {
+    void save(Invoice invoice) override {
         cout << "Saving invoice to file..." << endl;
-        cout << "Total: " << invoice.calculateTotal() << endl;
     }
 };
 
@@ -77,26 +75,20 @@ int main() {
     // Create a Marker
     Marker marker("Reynolds", "Blue", 2022, 10);
 
-    // Create an Invoice
+    // Create an Invoice for 5 markers
     Invoice invoice(marker, 5);
 
-    // Create DatabaseInvoiceDao and save to database
-    InvoiceDao* dbDao = new DatabaseInvoiceDao();
-    dbDao->save(invoice);
-    delete dbDao;
+    // Save invoice to database
+    DatabaseInvoiceDao dbDao;
+    dbDao.save(invoice);
 
-    cout << "-------------------------" << endl;
+    // Save invoice to file
+    FileInvoiceDao fileDao;
+    fileDao.save(invoice);
 
-    // Create FileInvoiceDao and save to file
-    InvoiceDao* fileDao = new FileInvoiceDao();
-    fileDao->save(invoice);
-    delete fileDao;
-
-    cout << "-------------------------" << endl;
-
-    // Create InvoicePrinter and print the invoice
-    InvoicePrinter printer(invoice);  // <-- corrected
-    printer.print();                  // <-- corrected
+    // Print Invoice
+    InvoicePrinter invoicePrinter(invoice);
+    invoicePrinter.print();
 
     return 0;
 }
